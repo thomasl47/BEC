@@ -434,6 +434,10 @@ class GcodeExport(inkex.Effect):
 			file_gcode.write('G90; Use absolute coordinates\n')				
 			file_gcode.write('G92; Coordinate Offset\n')	
 
+			#Move Z to focus distance
+			file_gcode.write('G00 Z'+str(self.options.focus_dist)+'\n')
+			#Creazione del Gcode
+
 			#Creazione del Gcode
 			
 			#allargo la matrice per lavorare su tutta l'immagine
@@ -443,92 +447,112 @@ class GcodeExport(inkex.Effect):
 			
 			if self.options.conversion_type != 6:
 				for y in range(h):
+					pGcode_y = (float(y) - float(h)/2. )/Scala
 					if y % 2 == 0 :
 						for x in range(w):
+							pGcode_x = (float(x) - float(w)/2. )/Scala
 							if matrice_BN[y][x] == N :
 								if Laser_ON == False :
 									#file_gcode.write('G00 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G00) + '\n')
-									file_gcode.write('G00 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + '\n') #tolto il Feed sul G00
-									file_gcode.write('M03; Laser ON\n')			
+									#file_gcode.write('G00 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + '\n') #tolto il Feed sul G00
+									file_gcode.write('G00 X' + str(pGcode_x) + ' Y' + str(pGcode_y) + '\n') #tolto il Feed sul G00
+									file_gcode.write('M03; Laser ON\n')
 									Laser_ON = True
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == w-1 :
-										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
+										#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
+										file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 										file_gcode.write('M05; Laser OFF\n')
 										Laser_ON = False
 									else: 
 										if matrice_BN[y][x+1] != N :
-											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 											file_gcode.write('M05; Laser OFF\n')
 											Laser_ON = False
 					else:
 						for x in reversed(range(w)):
+							pGcode_x = (float(x) - float(w)/2. )/Scala
 							if matrice_BN[y][x] == N :
 								if Laser_ON == False :
 									#file_gcode.write('G00 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G00) + '\n')
-									file_gcode.write('G00 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + '\n') #tolto il Feed sul G00
+									#file_gcode.write('G00 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + '\n') #tolto il Feed sul G00
+									file_gcode.write('G00 X' + str(pGcode_x) + ' Y' + str(pGcode_y) + '\n') #tolto il Feed sul G00
 									file_gcode.write('M03; Laser ON\n')			
 									Laser_ON = True
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == 0 :
-										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
+										#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
+										file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 										file_gcode.write('M05; Laser OFF\n')
 										Laser_ON = False
 									else: 
 										if matrice_BN[y][x-1] != N :
-											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 											file_gcode.write('M05; Laser OFF\n')
 											Laser_ON = False				
 
 			else: ##SCALA DI GRIGI
 				for y in range(h):
+					pGcode_y = (float(y) - float(h)/2. )/Scala
 					if y % 2 == 0 :
 						for x in range(w):
+							pGcode_x = (float(x) - float(w)/2. )/Scala
 							if matrice_BN[y][x] != B :
 								if Laser_ON == False :
-									file_gcode.write('G00 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +'\n')
+									#file_gcode.write('G00 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +'\n')
+									file_gcode.write('G00 X' + str(pGcode_x) + ' Y' + str(pGcode_y) + '\n') 
 									file_gcode.write('M03 '+ ' S' + str(255 - matrice_BN[y][x]) +' ; Laser ON\n')
 									Laser_ON = True
 									
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == w-1 : #controllo fine riga
-										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
+										#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
+										file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 										file_gcode.write('M05; Laser OFF\n')
 										Laser_ON = False
 										
 									else: 
 										if matrice_BN[y][x+1] == B :
-											file_gcode.write('G01 X' + str(float(x+1)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											#file_gcode.write('G01 X' + str(float(x+1)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 											file_gcode.write('M05; Laser OFF\n')
 											Laser_ON = False
 											
 										elif matrice_BN[y][x] != matrice_BN[y][x+1] :
-											file_gcode.write('G01 X' + str(float(x+1)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											#file_gcode.write('G01 X' + str(float(x+1)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 											file_gcode.write('M03 '+ ' S' + str(255 - matrice_BN[y][x+1]) +' ; Change Laser power\n')												
 
 					
 					else:
 						for x in reversed(range(w)):
+							pGcode_x = (float(x) - float(w)/2. )/Scala
 							if matrice_BN[y][x] != B :
 								if Laser_ON == False :
-									file_gcode.write('G00 X' + str(float(x+1)/Scala) + ' Y' + str(float(y)/Scala) +'\n')
+									#file_gcode.write('G00 X' + str(float(x+1)/Scala) + ' Y' + str(float(y)/Scala) +'\n')
+									file_gcode.write('G00 X' + str(pGcode_x) + ' Y' + str(pGcode_y) + '\n') 
 									file_gcode.write('M03 '+ ' S' + str(255 - matrice_BN[y][x]) +' ; Laser ON\n')
 									Laser_ON = True
 									
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == 0 : #controllo fine riga ritorno
-										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
+										#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
+										file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 										file_gcode.write('M05; Laser OFF\n')
 										Laser_ON = False
 										
 									else: 
 										if matrice_BN[y][x-1] == B :
-											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 											file_gcode.write('M05; Laser OFF\n')
 											Laser_ON = False
 											
 										elif  matrice_BN[y][x] != matrice_BN[y][x-1] :
-											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											#file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
+											file_gcode.write('G01 X' + str(pGcode_x) + ' Y' + str(pGcode_y) +' F' + str(F_G01) + '\n')
 											file_gcode.write('M03 '+ ' S' + str(255 - matrice_BN[y][x-1]) +' ; Change Laser power\n')
 
 			
