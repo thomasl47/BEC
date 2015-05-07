@@ -82,12 +82,12 @@
 		<!-- Dove comparirà lo script all'interno del menù estensioni -->
 		<!--  " Estensioni => 305 Engineering => prova_estensione " -->
         <effects-menu>
-            <submenu name="305 Engineering"/>
+            <submenu name="Atom Tool"/>
         </effects-menu>
     </effect>
     
 	<!-- Script python da eseguire -->
 	<script>
-    	<command reldir="extensions" interpreter="python">raster2laser_gcode.py</command>
+    	<command reldir="extensions" interpreter="python">BEC.py</command>
     </script>
 </inkscape-extension>
